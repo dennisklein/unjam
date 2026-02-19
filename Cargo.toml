@@ -1,0 +1,24 @@
+# SPDX-License-Identifier: LGPL-3.0-or-later
+# SPDX-FileCopyrightText: © GSI Helmholtzzentrum f. Schwerionenforschung GmbH, Darmstadt, Germany
+
+[package]
+name = "unjam"
+version = "0.1.0"
+edition = "2024"
+description = "Utility for Node/Job Analysis and Monitoring"
+repository = "https://github.com/GSI-HPC/unjam"
+homepage = "https://github.com/GSI-HPC/unjam"
+readme = "README.md"
+license = "LGPL-3.0-or-later"
+keywords = ["hpc", "monitoring", "slurm"]
+categories = ["command-line-utilities"]
+
+[package.metadata.release]
+publish = false
+tag-prefix = "v"
+sign-commit = true
+sign-tag = true
+push-remote = "upstream"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }

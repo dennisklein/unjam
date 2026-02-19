@@ -1,0 +1,39 @@
+# SPDX-License-Identifier: LGPL-3.0-or-later
+# SPDX-FileCopyrightText: © GSI Helmholtzzentrum f. Schwerionenforschung GmbH, Darmstadt, Germany
+
+name: Publish
+
+on:
+  push:
+    tags:
+      - "v*"
+
+env:
+  CARGO_TERM_COLOR: always
+
+permissions:
+  security-events: write
+
+jobs:
+  checks:
+    if: github.repository == 'GSI-HPC/unjam'
+    uses: ./.github/workflows/checks.yml
+
+  publish:
+    name: Publish to crates.io
+    if: github.repository == 'GSI-HPC/unjam'
+    needs: checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify tag matches Cargo.toml version
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          VERSION=$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml)
+          if [ "$TAG" != "$VERSION" ]; then
+            echo "::error::Tag v$TAG does not match Cargo.toml version $VERSION"
+            exit 1
+          fi
+      - run: cargo publish
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
